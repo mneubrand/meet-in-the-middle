@@ -1,0 +1,57 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    color: #565656;
+}
+
+#map-wrapper {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.wrapper {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+}
+
+.cell {
+    background: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.location {
+    margin: 10px 0;
+}
+
+#buttons {
+    margin-top: 20px;
+}
+
+#search {
+    width: 200px;
+}
+
+#reset {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 200px;
+    display: none;
+}

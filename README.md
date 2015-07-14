@@ -1,0 +1,1 @@
+Simple single page app that takes multiple addresses and finds a meeting spot in the middle (e.g. a McDonald's)

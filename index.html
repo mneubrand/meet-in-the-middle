@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Middle</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="map-wrapper">
+    <div id="map"></div>
+</div>
+
+<div class="wrapper">
+<div class="cell">
+    <h1>Meet in the Middle</h1>
+
+    <form id="form">
+        <h4>What addresses are you coming from?</h4>
+        <div id="locations">
+            <input type="text" class="form-control location" placeholder="e.g. 1 Market St, San Francisco, CA" />
+            <input type="text" class="form-control location"/>
+            <input type="text" class="form-control location"/>
+            <input type="text" class="form-control location"/>
+            <input type="text" class="form-control location"/>
+
+            <!-- Test Locations -->
+            <!--
+            <input type="text" class="form-control location" value="33 New Montgomery St, San Francisco, CA" />
+            <input type="text" class="form-control location" value="121 Spear St, San Francisco, CA" />
+            <input type="text" class="form-control location" value="633 Battery St, San Francisco, CA" />
+            <input type="text" class="form-control location"/>
+            <input type="text" class="form-control location"/>
+            -->
+        </div>
+
+        <h4>What place do you want to meet at?</h4>
+        <input type="text" class="form-control location" id="destination" placeholder="e.g. McDonald's" />
+
+        <!-- Test Destination -->
+        <!--
+        <input type="text" class="form-control location" id="destination" value="McDonald's" />
+        -->
+
+        <h4>How will you get there?</h4>
+        <div id="travelMode" class="btn-group" data-toggle="buttons" role="group">
+            <label class="btn btn-default active">
+                <input type="radio" name="options" id="walk" autocomplete="off" checked><i class="fa fa-user"></i>
+            </label>
+            <label class="btn btn-default">
+                <input type="radio" name="options" id="car" autocomplete="off" checked><i class="fa fa-car"></i>
+            </label>
+            <label class="btn btn-default">
+                <input type="radio" name="options" id="train" autocomplete="off" checked><i class="fa fa-train"></i>
+            </label>
+        </div>
+
+        <p id="buttons"><button class="btn btn-lg btn-primary btn-search" id="search" type="submit">Search</button></p>
+    </form>
+</div>
+</div>
+
+<button class="btn btn-lg btn-primary" id="reset" type="submit">Start Over</button>
+
+<!-- Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Error</h4>
+            </div>
+            <div class="modal-body" id="errorText"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+
+<script src="js/main.js"></script>
+</body>
+</html>
