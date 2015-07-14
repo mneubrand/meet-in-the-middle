@@ -94,7 +94,7 @@ var middle = (function() {
         service = new google.maps.places.PlacesService(map);
         var request = {
             location: map.getCenter(),
-            radius: '500',
+            radius: '50000',
             name: destination
         };
 
@@ -292,8 +292,10 @@ var middle = (function() {
             destinationMarkers[i].setMap(null);
         }
 
-        directionsDisplay.setMap(null);
-        directionsDisplay = null;
+        if(directionsDisplay) {
+            directionsDisplay.setMap(null);
+            directionsDisplay = null;
+        }
 
         $('.wrapper').css('display', 'block');
         $('#reset').css('display', 'none');
