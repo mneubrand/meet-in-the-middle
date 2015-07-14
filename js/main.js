@@ -6,7 +6,7 @@ var middle = (function() {
 
     var map, geocoder, service, directionsDisplay, lastWindow;
 
-    var addresses, locations, locationsDecoded;
+    var addresses, locations, locationMarkers, locationsDecoded;
     var destinations, destinationMarkers, destinationDistances, destinationInfoWindows;
     var destinationRoutes, destinationsMeasured, shortestAverage, shortestAverageIndex;
 
@@ -23,18 +23,13 @@ var middle = (function() {
         map = new google.maps.Map(document.getElementById('map'),
             mapOptions);
         geocoder = new google.maps.Geocoder();
-
-        directionsDisplay = new google.maps.DirectionsRenderer({
-            suppressMarkers: true,
-            preserveViewport: true
-        });
-        directionsDisplay.setMap(map);
     }
     google.maps.event.addDomListener(window, 'load', initialize);
 
     function geocodeAddresses() {
         console.log('geocodeAddresses');
         locations = [];
+        locationMarkers = [];
         locationsDecoded = 0;
 
         for (var i = 0; i < addresses.length; i++) {
@@ -54,6 +49,7 @@ var middle = (function() {
                     icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
                     zIndex: 0
                 });
+                locationMarkers[addressIndex] = marker;
 
                 var infowindow = new google.maps.InfoWindow({
                     content: results[0].formatted_address
@@ -146,8 +142,13 @@ var middle = (function() {
     function getDistance(locationIndex, destIndex) {
         console.log('getDistance(' + locationIndex + ',' + destIndex + ')');
 
-        console.log($('#travelMode > .btn.active > input').attr('id'));
-        var travelMode = google.maps.TravelMode.WALKING; //TODO
+        var modeSelection = $('#travelMode > .btn.active > input').attr('id');
+        var travelMode = google.maps.TravelMode.WALKING;
+        if(modeSelection === 'car') {
+            var travelMode = google.maps.TravelMode.DRIVING;
+        } else if(modeSelection === 'train') {
+            var travelMode = google.maps.TravelMode.TRANSIT;
+        }
         var directionsService = new google.maps.DirectionsService();
 
         var request = {
@@ -283,6 +284,17 @@ var middle = (function() {
     });
 
     $('#reset').click(function(event) {
+        for(var i=0; i<locationMarkers.length; i++) {
+            locationMarkers[i].setMap(null);
+        }
+
+        for(i=0; i<destinationMarkers.length; i++) {
+            destinationMarkers[i].setMap(null);
+        }
+
+        directionsDisplay.setMap(null);
+        directionsDisplay = null;
+
         $('.wrapper').css('display', 'block');
         $('#reset').css('display', 'none');
         event.preventDefault();
@@ -296,6 +308,13 @@ var middle = (function() {
     }
 
     function showDirections(locationIndex, destIndex) {
+        if(!directionsDisplay) {
+            directionsDisplay = new google.maps.DirectionsRenderer({
+                suppressMarkers: true,
+                preserveViewport: true
+            });
+            directionsDisplay.setMap(map);
+        }
         directionsDisplay.setDirections(destinationRoutes[destIndex][locationIndex]);
     }
 
