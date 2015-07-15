@@ -374,16 +374,18 @@ var middle = (function() {
         event.preventDefault();
     });
 
-    $('.btn-tweet').click(function() {
+    $('.btn-tweet').click(function(event) {
         var text = 'Let\'s meet in the middle';
         var url = 'https://twitter.com/share?text=' + encodeURIComponent(text) + '&hashtags=MeetInTheMiddle&url=' + encodeURIComponent(location.href);
         window.open(url, 'Tweet', 'width=550, height=420');
+        event.preventDefault();
     });
 
-    $('.btn-fb').click(function() {
+    $('.btn-fb').click(function(event) {
         var text = 'Let\'s meet in the middle';
         var url = 'https://facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href);
         window.open(url, 'Share', 'width=550, height=420');
+        event.preventDefault();
     });
 
     function showError(message) {

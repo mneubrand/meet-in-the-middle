@@ -81,3 +81,11 @@ html, body {
     background-color: #3a5795;
     color: #fff;
 }
+
+#copy {
+    position: absolute;
+    bottom: 10px;
+    padding: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.8);
+}
