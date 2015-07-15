@@ -6,9 +6,12 @@ var middle = (function() {
 
     var map, geocoder, service, directionsDisplay, lastWindow;
 
-    var addresses, locations, locationMarkers, locationsDecoded;
+    var addresses, modeSelection, destinationInput;
+    var locations, locationMarkers, locationsDecoded;
     var destinations, destinationMarkers, destinationDistances, destinationInfoWindows;
     var destinationRoutes, destinationsMeasured, shortestAverage, shortestAverageIndex;
+
+    var ignoreHashChange;
 
     function initialize() {
         var mapOptions = {
@@ -20,11 +23,120 @@ var middle = (function() {
             scaleControl: false,
             streetViewControl: false
         };
-        map = new google.maps.Map(document.getElementById('map'),
-            mapOptions);
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
         geocoder = new google.maps.Geocoder();
+
+        if(window.location.hash) {
+            parseHash();
+        } else if(window.localStorage) {
+            var inputs = $('#locations > input');
+            try {
+                inputs.each(function(index) {
+                    var text = window.localStorage['mitm-address-' + index];
+                    if(text) {
+                        $(this).val(text);
+                    }
+                });
+            } catch(e) {
+                console.error(e);
+            }
+
+            var destination = window.localStorage['mitm-destination'];
+            if(destination) {
+                $('#destination').val(destination)
+            };
+        }
+
+        $(window).on('hashchange', function() {
+            if (ignoreHashChange) {
+                ignoreHashChange = false;
+            } else {
+                parseHash();
+            }
+        });
     }
-    google.maps.event.addDomListener(window, 'load', initialize);
+
+    function parseHash() {
+        if(window.location.hash) {
+            var parameters = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
+
+            $('#destination').val(parameters.destination);
+            $('#locations > input').each(function (index) {
+                $(this).val(parameters.addresses[index]);
+            });
+            var radio = $('#travelMode > .btn > input[id="' + parameters.transportMode + '"]').parent().button('toggle');
+
+            search();
+        } else {
+            reset();
+        }
+    }
+
+    function reset() {
+        for(var i=0; i<locationMarkers.length; i++) {
+            locationMarkers[i].setMap(null);
+        }
+
+        for(i=0; i<destinationMarkers.length; i++) {
+            destinationMarkers[i].setMap(null);
+        }
+
+        if(directionsDisplay) {
+            directionsDisplay.setMap(null);
+            directionsDisplay = null;
+        }
+
+        $('.wrapper').css('display', 'block');
+        $('#toolbar').css('display', 'none');
+    }
+
+    function search() {
+        addresses = [];
+
+        var i = 0;
+        $('#locations > input').each(function() {
+            var text = $(this).val();
+            if (text) {
+                addresses.push(text);
+                if(window.localStorage) {
+                    try {
+                       window.localStorage['mitm-address-' + (i++)] = text;
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
+            }
+        });
+
+        if(addresses.length < 2) {
+            showError('You must enter at least 2 places');
+            return;
+        }
+
+        destinationInput = $('#destination').val();
+        if(window.localStorage) {
+            try {
+                window.localStorage['mitm-destination'] = destinationInput;
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        if(!destinationInput) {
+            showError('You must enter a place you want to meet at');
+            return;
+        }
+
+        modeSelection = $('#travelMode > .btn.active > input').attr('id');
+
+        window.location.hash = encodeURIComponent(JSON.stringify({
+            addresses: addresses,
+            destination: destinationInput,
+            transportMode: modeSelection
+        }));
+
+        geocodeAddresses(addresses);
+    }
 
     function geocodeAddresses() {
         console.log('geocodeAddresses');
@@ -40,7 +152,6 @@ var middle = (function() {
     function geocodeAddress(addressIndex) {
         console.log('geocodeAddresses(' + addressIndex + ')');
         geocoder.geocode({'address': addresses[addressIndex]}, function (results, status) {
-            console.log('processing geocode for address ' + addressIndex);
             console.log(results);
             if (status == google.maps.GeocoderStatus.OK) {
                 var marker = new google.maps.Marker({
@@ -66,8 +177,8 @@ var middle = (function() {
                 locations[addressIndex] = results[0].geometry.location;
                 locationsDecoded++;
                 if (locationsDecoded === addresses.length) {
-                    centerMap(locations);
-                    findDestinations();
+                    var center = centerMap(locations);
+                    findDestinations(center);
                 }
             } else {
                 showError('Couldn\'t find a location for ' + addresses[addressIndex]);
@@ -85,17 +196,17 @@ var middle = (function() {
         }
 
         map.fitBounds(bounds);
+        return bounds.getCenter();
     }
 
-    function findDestinations() {
+    function findDestinations(center) {
         console.log('findDestinations');
-        var destination = $('#destination').val();
 
         service = new google.maps.places.PlacesService(map);
         var request = {
-            location: map.getCenter(),
-            radius: '50000',
-            name: destination
+            location: center,
+            name: destinationInput,
+            rankBy: google.maps.places.RankBy.DISTANCE
         };
 
         service.nearbySearch(request, function(results, status) {
@@ -140,9 +251,6 @@ var middle = (function() {
     }
 
     function getDistance(locationIndex, destIndex) {
-        console.log('getDistance(' + locationIndex + ',' + destIndex + ')');
-
-        var modeSelection = $('#travelMode > .btn.active > input').attr('id');
         var travelMode = google.maps.TravelMode.WALKING;
         if(modeSelection === 'car') {
             var travelMode = google.maps.TravelMode.DRIVING;
@@ -166,7 +274,6 @@ var middle = (function() {
         }
 
         directionsService.route(request, function(result, status) {
-            console.log('processing directions for getDistance(' + locationIndex + ',' + destIndex + ')');
             if (status == google.maps.DirectionsStatus.OK) {
                 var distance = 0;
                 for (var k = 0; k < result.routes[0].legs.length; k++) {
@@ -216,7 +323,7 @@ var middle = (function() {
             }
         }
 
-        contentString += '<li><b>Average: ' + average.toFixed(2) + 'm (&sigma;=' + Math.sqrt(diffSquared / total) + ')</b></li>';
+        contentString += '<li><b>Average: ' + average.toFixed(2) + 'm (&sigma;=' + Math.sqrt(diffSquared / total).toFixed(2) + ')</b></li>';
 
         contentString += '</ul>';
 
@@ -246,63 +353,38 @@ var middle = (function() {
             destinationInfoWindows[shortestAverageIndex].open(map, destinationMarkers[shortestAverageIndex]);
 
             $('.wrapper').css('display', 'none');
-            $('#reset').css('display', 'block');
+            $('#toolbar').css('display', 'block');
         }
-    }
-
-    function search() {
-        addresses = [];
-        $('#locations > input').each(function() {
-            var text = $(this).val();
-            if (text) {
-                addresses.push(text);
-            }
-        });
-
-        if(addresses.length < 2) {
-            showError('You must enter at least 2 places');
-            return;
-        }
-
-        if(!$('#destination').val()) {
-            showError('You must enter a place you want to meet at');
-            return;
-        }
-
-        console.log(addresses);
-        geocodeAddresses(addresses);
     }
 
     $('#form').submit(function(event) {
         search();
+        ignoreHashChange = true;
         event.preventDefault();
     });
 
     $('#search').click(function(event) {
         search();
+        ignoreHashChange = true;
         event.preventDefault();
     });
 
     $('#reset').click(function(event) {
-        for(var i=0; i<locationMarkers.length; i++) {
-            locationMarkers[i].setMap(null);
-        }
-
-        for(i=0; i<destinationMarkers.length; i++) {
-            destinationMarkers[i].setMap(null);
-        }
-
-        if(directionsDisplay) {
-            directionsDisplay.setMap(null);
-            directionsDisplay = null;
-        }
-
-        $('.wrapper').css('display', 'block');
-        $('#reset').css('display', 'none');
+        reset();
         event.preventDefault();
     });
 
+    $('.btn-tweet').click(function() {
+        var text = 'Let\'s meet in the middle';
+        var url = 'https://twitter.com/share?text=' + encodeURIComponent(text) + '&hashtags=MeetInTheMiddle&url=' + encodeURIComponent(location.href);
+        window.open(url, 'Tweet', 'width=550, height=420');
+    });
 
+    $('.btn-fb').click(function() {
+        var text = 'Let\'s meet in the middle';
+        var url = 'https://facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href);
+        window.open(url, 'Share', 'width=550, height=420');
+    });
 
     function showError(message) {
         $('#errorText').text(message);
@@ -319,6 +401,8 @@ var middle = (function() {
         }
         directionsDisplay.setDirections(destinationRoutes[destIndex][locationIndex]);
     }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
 
     return {
         showDirections: showDirections

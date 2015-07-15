@@ -32,6 +32,9 @@ html, body {
     width: 100%;
     max-width: 450px;
     margin: 0 auto;
+    height: 100%;
+    overflow: auto;
+    max-height: 580px;
 }
 
 .location {
@@ -46,12 +49,35 @@ html, body {
     width: 200px;
 }
 
-#reset {
+#toolbar {
     position: absolute;
     top: 10px;
     left: 0;
     right: 0;
     margin: auto;
-    width: 200px;
+    padding: 15px;
+    max-width: 550px;
+    width: 95%;
     display: none;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#toolbar .btn {
+    width: 150px;
+    margin: 0 10px;
+}
+
+#toolbar .btn i {
+    margin-right: 10px;
+}
+
+.btn-tweet {
+    background-color: #55acee;
+    color: #fff;
+}
+
+.btn-fb {
+    background-color: #3a5795;
+    color: #fff;
 }

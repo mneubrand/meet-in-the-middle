@@ -52,7 +52,7 @@
         <h4>How will you get there?</h4>
         <div id="travelMode" class="btn-group" data-toggle="buttons" role="group">
             <label class="btn btn-default active">
-                <input type="radio" name="options" id="walk" autocomplete="off" checked><i class="fa fa-user"></i>
+                <input checked type="radio" name="options" id="walk" autocomplete="off" checked><i class="fa fa-user"></i>
             </label>
             <label class="btn btn-default">
                 <input type="radio" name="options" id="car" autocomplete="off" checked><i class="fa fa-car"></i>
@@ -67,7 +67,11 @@
 </div>
 </div>
 
-<button class="btn btn-lg btn-primary" id="reset" type="submit">Start Over</button>
+<div id="toolbar">
+    <button class="btn btn-lg btn-primary" id="reset" type="submit">Start Over</button>
+    <a class="btn btn-lg btn-tweet" href="#" role="button"><i class="fa fa-twitter"></i> Tweet</a>
+    <a class="btn btn-lg btn-fb" href="#" role="button"><i class="fa fa-facebook"></i> Share</a>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
@@ -85,6 +89,7 @@
     </div>
 </div>
 
+<script type="text/javascript" async src="//platform.twitter.com/widgets.js"></script>
 <script src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
