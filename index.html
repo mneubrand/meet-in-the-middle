@@ -63,14 +63,18 @@
         </div>
 
         <p id="buttons"><button class="btn btn-lg btn-primary btn-search" id="search" type="submit">Search</button></p>
+
+        <div id="copy">
+            &copy; <a href="http://mneubrand.github.io">Markus Neubrand</a> 2015
+        </div>
     </form>
 </div>
 </div>
 
 <div id="toolbar">
-    <button class="btn btn-lg btn-primary" id="reset" type="submit">Start Over</button>
-    <a class="btn btn-lg btn-tweet" href="#" role="button"><i class="fa fa-twitter"></i> Tweet</a>
-    <a class="btn btn-lg btn-fb" href="#" role="button"><i class="fa fa-facebook"></i> Share</a>
+    <button class="btn btn-overlay btn-primary" id="reset" type="submit"><i class="fa fa-undo"></i><span class="caption-overlay">Start Over</span></button>
+    <a class="btn btn-overlay btn-tweet" href="#" role="button"><i class="fa fa-twitter"></i><span class="caption-overlay">Tweet</span></a>
+    <a class="btn btn-overlay btn-fb" href="#" role="button"><i class="fa fa-facebook"></i><span class="caption-overlay">Share</span></a>
 </div>
 
 <!-- Modal -->
@@ -87,10 +91,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div id="copy">
-    &copy; <a href="http://mneubrand.github.io">Markus Neubrand</a> 2015
 </div>
 
 <script type="text/javascript" async src="//platform.twitter.com/widgets.js"></script>

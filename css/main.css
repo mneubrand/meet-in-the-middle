@@ -28,7 +28,7 @@ html, body {
 .cell {
     background: rgba(255, 255, 255, 0.8);
     text-align: center;
-    padding: 15px;
+    padding: 10px;
     width: 100%;
     max-width: 450px;
     margin: 0 auto;
@@ -49,29 +49,6 @@ html, body {
     width: 200px;
 }
 
-#toolbar {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    padding: 15px;
-    max-width: 550px;
-    width: 95%;
-    display: none;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.8);
-}
-
-#toolbar .btn {
-    width: 150px;
-    margin: 0 10px;
-}
-
-#toolbar .btn i {
-    margin-right: 10px;
-}
-
 .btn-tweet {
     background-color: #55acee;
     color: #fff;
@@ -82,10 +59,59 @@ html, body {
     color: #fff;
 }
 
-#copy {
+#toolbar {
     position: absolute;
-    bottom: 10px;
-    padding: 10px;
+    top: 10px;
     left: 10px;
+    width: 60px;
+    padding: 10px;
+    display: none;
+    text-align: center;
     background: rgba(255, 255, 255, 0.8);
+}
+
+.btn-overlay {
+    margin-bottom: 3px;
+}
+
+#toolbar .btn {
+    width: 40px;
+}
+
+.caption-overlay {
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    #toolbar {
+        left: 0;
+        right: 0;
+        margin: auto;
+        max-width: 550px;
+        width: 95%;
+    }
+
+    .btn-overlay {
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.3333333;
+        border-radius: 6px;
+        margin-bottom: 0px;
+        margin-right: 10px;
+    }
+
+    #toolbar .btn {
+        width: 150px;
+        margin: 0 10px;
+    }
+
+    #toolbar i {
+        margin-right: 10px;
+    }
+
+    .caption-overlay {
+        display: inline-block;
+    }
+
 }
